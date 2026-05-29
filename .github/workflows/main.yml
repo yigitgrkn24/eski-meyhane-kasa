@@ -1,0 +1,32 @@
+name: Tam Otomatik Android APK Derleyici
+
+on:
+  push:
+    branches:
+      - main  # Ana kola (main) iPhone'dan her yeni kod yüklendiğinde otomatik çalışır
+  workflow_dispatch: # İhtiyacın olursa yine de el ile tetikleme butonu aktif kalır
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodları Klonla
+        uses: actions/checkout@v4
+
+      - name: Java Kurulumu
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Gradle'a Çalışma İzni Ver
+        run: chmod +x gradlew
+
+      - name: APK Dosyasını Build Et
+        run: ./gradlew assembleDebug
+
+      - name: APK Dosyasını Çıktı Olarak Sun
+        uses: actions/upload-artifact@v4
+        with:
+          name: EskiMeyhaneKasa-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
